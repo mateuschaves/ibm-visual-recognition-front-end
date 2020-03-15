@@ -5,7 +5,7 @@ import filesize from "filesize";
 import api from "./services/api";
 
 import GlobalStyle from "./styles/global";
-import { Container, Content } from "./styles";
+import { Container, Content, UploadButton } from "./styles";
 
 import Upload from "./components/Upload";
 import FileList from "./components/FileList";
@@ -47,7 +47,7 @@ class App extends Component {
       uploadedFiles: this.state.uploadedFiles.concat(uploadedFiles)
     });
 
-    uploadedFiles.forEach(this.processUpload);
+    // uploadedFiles.forEach(this.processUpload);
   };
 
   updateFile = (id, data) => {
@@ -84,7 +84,7 @@ class App extends Component {
       })
       .catch(() => {
         this.updateFile(uploadedFile.id, {
-          error: true
+          error: false
         });
       });
   };
@@ -111,6 +111,9 @@ class App extends Component {
           {!!uploadedFiles.length && (
             <FileList files={uploadedFiles} onDelete={this.handleDelete} />
           )}
+          <UploadButton>
+            Enviar
+          </UploadButton>
         </Content>
         <GlobalStyle />
       </Container>
