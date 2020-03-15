@@ -5,7 +5,7 @@ import filesize from "filesize";
 import api from "./services/api";
 
 import GlobalStyle from "./styles/global";
-import { Container, Content, UploadButton } from "./styles";
+import { Container, Content } from "./styles";
 
 import Upload from "./components/Upload";
 import FileList from "./components/FileList";
@@ -14,21 +14,6 @@ class App extends Component {
   state = {
     uploadedFiles: []
   };
-
-  async componentDidMount() {
-    const response = await api.get("posts");
-
-    this.setState({
-      uploadedFiles: response.data.map(file => ({
-        id: file._id,
-        name: file.name,
-        readableSize: filesize(file.size),
-        preview: file.url,
-        uploaded: true,
-        url: file.url
-      }))
-    });
-  }
 
   handleUpload = files => {
     const uploadedFiles = files.map(file => ({
@@ -47,7 +32,7 @@ class App extends Component {
       uploadedFiles: this.state.uploadedFiles.concat(uploadedFiles)
     });
 
-    // uploadedFiles.forEach(this.processUpload);
+    uploadedFiles.forEach(this.processUpload);
   };
 
   updateFile = (id, data) => {
@@ -57,16 +42,15 @@ class App extends Component {
           ? { ...uploadedFile, ...data }
           : uploadedFile;
       })
-    });
+    }, () => console.log(this.state));
   };
 
   processUpload = uploadedFile => {
     const data = new FormData();
-
-    data.append("file", uploadedFile.file, uploadedFile.name);
+    data.append("images", uploadedFile.file, uploadedFile.name);
 
     api
-      .post("posts", data, {
+      .post("image", data, {
         onUploadProgress: e => {
           const progress = parseInt(Math.round((e.loaded * 100) / e.total));
 
@@ -75,26 +59,17 @@ class App extends Component {
           });
         }
       })
-      .then(response => {
+      .then(({ data }) => {
         this.updateFile(uploadedFile.id, {
           uploaded: true,
-          id: response.data._id,
-          url: response.data.url
+          class: data.images[0]
         });
       })
       .catch(() => {
         this.updateFile(uploadedFile.id, {
-          error: false
+          error: true
         });
       });
-  };
-
-  handleDelete = async id => {
-    await api.delete(`posts/${id}`);
-
-    this.setState({
-      uploadedFiles: this.state.uploadedFiles.filter(file => file.id !== id)
-    });
   };
 
   componentWillUnmount() {
@@ -109,11 +84,8 @@ class App extends Component {
         <Content>
           <Upload onUpload={this.handleUpload} />
           {!!uploadedFiles.length && (
-            <FileList files={uploadedFiles} onDelete={this.handleDelete} />
+            <FileList files={uploadedFiles} />
           )}
-          <UploadButton>
-            Enviar
-          </UploadButton>
         </Content>
         <GlobalStyle />
       </Container>

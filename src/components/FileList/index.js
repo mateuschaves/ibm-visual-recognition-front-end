@@ -12,14 +12,7 @@ const FileList = ({ files, onDelete }) => (
           <Preview src={uploadedFile.preview} />
           <div>
             <strong>{uploadedFile.name}</strong>
-            <span>
-              {uploadedFile.readableSize}{" "}
-              {!!uploadedFile.url && (
-                <button onClick={() => onDelete(uploadedFile.id)}>
-                  Excluir
-                </button>
-              )}
-            </span>
+            <p>{uploadedFile.class && `${uploadedFile.class.classifiers[0].classes[0].class} ${(uploadedFile.class.classifiers[0].classes[0].score * 100).toFixed(2)}%`}</p>
           </div>
         </FileInfo>
 
