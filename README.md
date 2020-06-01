@@ -1,4 +1,4 @@
-# IBM visual recognition Front end
+# IBM Visual Recognition Front end
 Client to upload images to api that classify using IBM Watson Visual Recognition
 
 ![](https://media.giphy.com/media/hR09xG2fV1kGNnI0tF/giphy.gif)
